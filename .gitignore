@@ -1,0 +1,28 @@
+# Code Editor Configuration
+.vscode
+.idea
+.astro
+
+# Python Configuration
+__pycache__
+venv
+.venv
+
+# Node.js Configuration
+node_modules
+npm-debug.log
+
+# App Configuration
+backend/logs/*
+!backend/logs/dummy.log
+backend/app/wallet/*
+
+# Oracle Instant Client Configuration
+backend/oracle_home/*
+
+# Environment Configuration
+.env
+.env.local
+
+# Database Scripts
+backend/database/*

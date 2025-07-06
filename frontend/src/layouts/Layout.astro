@@ -1,0 +1,100 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonicalURL = "";
+const siteName = "Oracle Autonomous Migration Tool (OAMT)";
+const siteDescription = "An efficient tool to migrate specific tables or records from Oracle databases to Oracle Autonomous Database. Simplify your data migration with real-time monitoring and detailed reports.";
+const siteKeywords = "Oracle, Autonomous Database, Migration, Data Migration, Oracle Cloud, Database Migration, OAMT, Tables, Records";
+const siteImage = "/assets/images/oamt-social-share.jpg";
+const siteUrl = "https://your-app-domain.com";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/assets/icons/favicon-96x96.png" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>${title} | ${siteName}</title>
+    <meta name="description" content="${description || siteDescription}" />
+    <meta name="keywords" content="${siteKeywords}" />
+    <link rel="canonical" href="${siteUrl}${Astro.url.pathname}" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${siteUrl}${Astro.url.pathname}" />
+    <meta property="og:title" content="${title} | ${siteName}" />
+    <meta property="og:description" content="${description || siteDescription}" />
+    <meta property="og:image" content="${siteUrl}${siteImage}" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="${siteUrl}${Astro.url.pathname}" />
+    <meta property="twitter:title" content="${title} | ${siteName}" />
+    <meta property="twitter:description" content="${description || siteDescription}" />
+    <meta property="twitter:image" content="${siteUrl}${siteImage}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="/node_modules/flowbite/dist/flowbite.min.js" is:inline></script>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900 flex-col justify-center w-full h-screen">
+    <div class=" max-w-screen-xl mx-auto">
+      <Header />
+      <slot />
+      <Footer />
+    </div>
+  </body>
+</html>
+<style is:global>
+  @import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500|Jost:400,500,600&display=swap");
+
+  :root {
+    --accent: 124, 58, 237;
+    --accent-gradient: linear-gradient(
+      45deg,
+      rgb(var(--accent)),
+      #da62c4 30%,
+      white 60%
+    );
+  }
+  html {
+    font-family: system-ui, sans-serif;
+    background-color: #f6f6f6;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+  }
+  body {
+    color: #2b2c48;
+    font-family: "Jost", sans-serif;
+    background-image: url(https://images.unsplash.com/photo-1566738780863-f9608f88f3a9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2378&q=80);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100%;
+    padding: 12px;
+  }
+  .body-container {
+    width: 100%;
+    height: calc(100% - 150px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  @media (max-width: 640px) {
+    body {
+      padding: 8px;
+    }
+  }
+  
+</style>

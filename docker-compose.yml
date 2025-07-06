@@ -1,0 +1,32 @@
+services:
+  backend:
+    env_file:
+      - ./.env
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DB_ORACLE_USER_TRANSACTIONAL: ${DB_ORACLE_USER_TRANSACTIONAL}
+      DB_ORACLE_PASSWORD_TRANSACTIONAL: ${DB_ORACLE_PASSWORD_TRANSACTIONAL}
+      DB_ORACLE_DSN_TRANSACTIONAL: ${DB_ORACLE_DSN_TRANSACTIONAL}
+      DB_ORACLE_USER_WAREHOUSE: ${DB_ORACLE_USER_WAREHOUSE}
+      DB_ORACLE_PASSWORD_WAREHOUSE: ${DB_ORACLE_PASSWORD_WAREHOUSE}
+      DB_ORACLE_DSN_WAREHOUSE: ${DB_ORACLE_DSN_WAREHOUSE}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    ports:
+      - "8081:8000"
+    volumes:
+      - /home/luis122448/Desktop/repository-tsi/migrate-oracle-python/backend/logs /opt/logs
+
+  frontend:
+    env_file:
+      - ./.env
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      MIGRATE_API_BASE_URL: ${MIGRATE_API_BASE_URL}
+    ports:
+      - "8082:80"
+    depends_on:
+      - backend

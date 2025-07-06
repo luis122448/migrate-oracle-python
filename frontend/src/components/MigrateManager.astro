@@ -1,0 +1,584 @@
+<div class="rounded-lg shadow-lg p-6 mt-6 flex flex-col max-h-screen bg-gray-100 dark:bg-slate-900">
+  <h2 class="text-2xl font-bold mb-4 dark:text-white">Migration Manager</h2>
+  <section class="flex flex-col md:flex-row gap-4 items-center">
+    <form id="migration-form" class="flex flex-col md:flex-row gap-4 items-center w-full">
+    <div class="flex-1 w-full">
+      <label
+        for="source-company-id"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Source Company ID (Numeric)</label
+      >
+      <input
+        type="number"
+        id="source-company-id"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="e.g., 100"
+        required
+      />
+    </div>
+    <div class="flex-1 w-full">
+      <label
+        for="dest-company-id"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Destination Company ID (Numeric)</label
+      >
+      <input
+        type="number"
+        id="dest-company-id"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="e.g., 200"
+        required
+      />
+    </div>
+    <div class="flex flex-col md:flex-row gap-2 mt-auto w-full md:w-auto">
+      <button
+        data-modal-target="confirmation-modal"
+        data-modal-toggle="confirmation-modal"
+        type="button"
+        id="start-migration-btn"
+        class="w-full md:w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Start Migration
+      </button>
+      <button
+        type="button"
+        id="print-report-btn"
+        class="w-full md:w-auto text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center"
+      >
+        <span id="print-report-text">Print Report</span>
+        <span id="print-report-loading" class="hidden">
+          <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
+          </svg>
+          Loading...
+        </span>
+      </button>
+    </div>
+    </form>
+  </section>
+  <section class="mb-4">
+    <p id="validation-message" class="text-red-500 text-sm mt-2 hidden">
+      Please enter valid numeric IDs for both source and destination companies.
+    </p>
+  </section>
+  <section
+    id="confirmation-modal"
+    tabindex="-1"
+    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  >
+    <div class="relative p-4 w-full max-w-md max-h-full">
+      <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+        <button
+          type="button"
+          class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          data-modal-hide="confirmation-modal"
+        >
+          <svg
+            class="w-3 h-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+        <div class="p-4 md:p-5 text-center">
+          <svg
+            class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 20"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+          </svg>
+          <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+            Are you sure you want to start migration from company <span
+              id="modal-source-id"
+              class="font-bold"></span> to company <span
+              id="modal-dest-id"
+              class="font-bold"></span>?
+          </h3>
+          <button
+            id="confirm-migration-btn"
+            data-modal-hide="confirmation-modal"
+            type="button"
+            class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+          >
+            Yes, I'm sure
+          </button>
+          <button
+            id="cancel-migration-btn"
+            data-modal-hide="confirmation-modal"
+            type="button"
+            class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+            >No, cancel</button
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+  <div
+    class="relative overflow-x-auto overflow-y-auto flex-1 min-h-96 max-h-96 p-4 bg-gray-100 dark:bg-gray-700 rounded-md"
+  >
+    <p class="text-gray-700 dark:text-gray-300" id="migration-status">
+      Waiting to start migration...
+    </p>
+    <div
+      id="migration-log"
+      class="mt-4 text-sm text-gray-600 dark:text-gray-400 font-mono whitespace-pre-wrap"
+    >
+    </div>
+  </div>
+</div>
+
+<script
+  lang="ts"
+  type="module"
+  define:vars={{ API_BASE_URL: import.meta.env.MIGRATE_API_BASE_URL }}
+>
+  console.log("MigrateManager.astro script loaded.");
+
+  function initializeMigrateManager() {
+    const startMigrationBtn = document.getElementById("start-migration-btn");
+    const sourceCompanyIdInput = document.getElementById("source-company-id");
+    const destCompanyIdInput = document.getElementById("dest-company-id");
+    const migrationStatus = document.getElementById("migration-status");
+    const migrationLog = document.getElementById("migration-log");
+
+    const confirmationModal = document.getElementById("confirmation-modal");
+    const modalSourceId = document.getElementById("modal-source-id");
+    const modalDestId = document.getElementById("modal-dest-id");
+    const confirmMigrationBtn = document.getElementById(
+      "confirm-migration-btn"
+    );
+    const cancelMigrationBtn = document.getElementById("cancel-migration-btn");
+    const validationMessage = document.getElementById("validation-message");
+    const printReportBtn = document.getElementById("print-report-btn");
+    const printReportText = document.getElementById("print-report-text");
+    const printReportLoading = document.getElementById("print-report-loading");
+
+    const refreshLogsBtn = document.getElementById("refresh-logs-btn");
+    const downloadLogsBtn = document.getElementById("download-logs-btn");
+    const migrationLogsContainer = document.getElementById("migration-logs-container");
+
+    const migrationForm = document.getElementById("migration-form");
+
+    if (
+      !startMigrationBtn ||
+      !sourceCompanyIdInput ||
+      !destCompanyIdInput ||
+      !migrationStatus ||
+      !migrationLog ||
+      !confirmationModal ||
+      !modalSourceId ||
+      !modalDestId ||
+      !confirmMigrationBtn ||
+      !cancelMigrationBtn ||
+      !migrationForm ||
+      !validationMessage ||
+      !printReportBtn ||
+      !printReportText ||
+      !printReportLoading ||
+      !refreshLogsBtn ||
+      !downloadLogsBtn ||
+      !migrationLogsContainer
+    ) {
+      console.error("Error: One or more migration elements not found.");
+      return;
+    }
+
+    // Initially disable the buttons
+    startMigrationBtn.disabled = true;
+    printReportBtn.disabled = true;
+    refreshLogsBtn.disabled = false; // Logs can be refreshed initially
+    downloadLogsBtn.disabled = false; // Logs can be downloaded initially
+
+    const validateForm = () => {
+      const sourceId = sourceCompanyIdInput.value;
+      const destId = destCompanyIdInput.value;
+      // Basic validation: check if inputs are not empty and are numbers
+      const isValid = sourceId !== '' && destId !== '' && !isNaN(Number(sourceId)) && !isNaN(Number(destId));
+      startMigrationBtn.disabled = !isValid;
+      printReportBtn.disabled = !isValid;
+
+      if (!isValid) {
+        validationMessage.classList.remove("hidden");
+      } else {
+        validationMessage.classList.add("hidden");
+      }
+    };
+
+    // Add event listeners for input changes to validate the form
+    sourceCompanyIdInput.addEventListener('input', validateForm);
+    destCompanyIdInput.addEventListener('input', validateForm);
+
+    // Initial validation call
+    validateForm();
+
+    // Update modal content when the button is clicked
+    startMigrationBtn.addEventListener('click', () => {
+      if (modalSourceId && modalDestId) {
+        modalSourceId.textContent = sourceCompanyIdInput.value;
+        modalDestId.textContent = destCompanyIdInput.value;
+      }
+    });
+
+    // Handle confirmation button click
+    confirmMigrationBtn.addEventListener('click', () => {
+      const sourceId = sourceCompanyIdInput.value;
+      const destId = destCompanyIdInput.value;
+      startWebSocketMigration(sourceId, destId);
+      // Flowbite should handle hiding the modal due to data-modal-hide attribute
+    });
+
+    // Handle print report button click
+    printReportBtn.addEventListener('click', async () => {
+      const sourceId = sourceCompanyIdInput.value;
+      const destId = destCompanyIdInput.value;
+
+      // Disable button and show loading indicator
+      printReportBtn.disabled = true;
+      printReportText.classList.add("hidden");
+      printReportLoading.classList.remove("hidden");
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/erp/migrate/report/pdf`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            source_id_cia: Number(sourceId),
+            dest_id_cia: Number(destId),
+            exceptions: [], // Add logic for exceptions if needed
+          }),
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          window.open(url, '_blank'); // Open PDF in a new tab
+        } else {
+          const errorData = await response.json();
+          console.error('Error generating PDF:', errorData);
+          alert(`Error generating PDF: ${errorData.message || response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Network error or unexpected issue:', error);
+        alert('An unexpected error occurred while trying to generate the PDF.');
+      } finally {
+        // Re-enable button and hide loading indicator
+        printReportBtn.disabled = false;
+        printReportText.classList.remove("hidden");
+        printReportLoading.classList.add("hidden");
+      }
+    });
+
+    // --- Log Management ---
+    async function fetchMigrationLogs() {
+      refreshLogsBtn.disabled = true;
+      downloadLogsBtn.disabled = true;
+      migrationLogsContainer.innerHTML = `<tr><td colspan="1" class="px-6 py-4 text-gray-500">Loading logs...</td></tr>`;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/erp/migrate/logs?log_type=migration`);
+        if (!response.ok) throw new Error("Error fetching logs");
+        const data = await response.json();
+        if (data.status !== 1.0) {
+          throw new Error(data.message || "Unknown error fetching logs");
+        }
+        renderMigrationLogs(data.list);
+      } catch (error) {
+        console.error("Error in fetchMigrationLogs:", error);
+        migrationLogsContainer.innerHTML = `<tr><td colspan="1" class="px-6 py-4 text-red-500">Could not load logs: ${error.message}.</td></tr>`;
+      } finally {
+        refreshLogsBtn.disabled = false;
+        downloadLogsBtn.disabled = false;
+      }
+    }
+
+    function renderMigrationLogs(logs) {
+      migrationLogsContainer.innerHTML = "";
+      if (logs.length === 0) {
+        migrationLogsContainer.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-gray-500">No logs available.</td></tr>`;
+        return;
+      }
+      logs.forEach((log) => {
+        const logRow = document.createElement("tr");
+        logRow.className = "bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200";
+        logRow.innerHTML = `
+          <td class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            ${log.filename}
+          </td>
+          <td class="px-6 py-1 w-fit whitespace-nowrap">
+            <button type="button" class="download-single-log-btn text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900" data-filename="${log.filename}" data-content="${encodeURIComponent(log.content)}">Download</button>
+          </td>
+        `;
+        migrationLogsContainer.appendChild(logRow);
+      });
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    function downloadSingleLog(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    async function downloadMigrationLogs() {
+      downloadLogsBtn.disabled = true;
+      refreshLogsBtn.disabled = true;
+      try {
+        const response = await fetch(`${API_BASE_URL}/erp/migrate/logs?log_type=migration`);
+        if (!response.ok) throw new Error("Error downloading logs");
+        const data = await response.json();
+        if (data.status !== 1.0) {
+          throw new Error(data.message || "Unknown error downloading logs");
+        }
+        const logContent = data.list.map(log => log.content).join('\n\n'); // Join content with double newline for readability
+        const blob = new Blob([logContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'migration_logs.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error in downloadMigrationLogs:", error);
+        alert(`Could not download logs: ${error.message}.`);
+      } finally {
+        downloadLogsBtn.disabled = false;
+        refreshLogsBtn.disabled = false;
+      }
+    }
+
+    // Initial fetch of logs
+    fetchMigrationLogs();
+
+    // Event Listeners for log buttons
+    refreshLogsBtn.addEventListener('click', fetchMigrationLogs);
+    downloadLogsBtn.addEventListener('click', downloadMigrationLogs);
+
+    migrationLogsContainer.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target.classList.contains('download-single-log-btn')) {
+        const filename = target.dataset.filename;
+        const content = decodeURIComponent(target.dataset.content);
+        downloadSingleLog(filename, content);
+      }
+    });
+
+    let ws = null;
+
+    const startWebSocketMigration = (sourceId, destId) => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        console.log("WebSocket already open.");
+        return;
+      }
+
+      migrationStatus.textContent = "Connecting to migration service...";
+      migrationLog.textContent = ""; // Clear previous logs
+
+      const wsUrl = `${API_BASE_URL.replace("http", "ws")}/migrate/all`;
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        migrationStatus.textContent =
+          "Connected. Sending migration parameters...";
+        console.log("WebSocket connected.");
+        ws?.send(
+          JSON.stringify({
+            source_id_cia: sourceId,
+            dest_id_cia: destId,
+            exceptions: [], // You can add logic for exceptions later if needed
+          })
+        );
+      };
+
+      ws.onmessage = (event) => {
+        const message = event.data;
+        console.log("Received message:", message);
+        migrationLog.textContent += message + "\n";
+        migrationLog.scrollTop = migrationLog.scrollHeight; // Scroll to bottom
+      };
+
+      ws.onclose = (event) => {
+        migrationStatus.textContent = `Disconnected. Code: ${event.code}, Reason: ${event.reason}`;
+        console.log("WebSocket disconnected:", event);
+      };
+
+      ws.onerror = (error) => {
+        migrationStatus.textContent =
+          "Error during migration. Check console for details.";
+        console.error("WebSocket error:", error);
+      };
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", initializeMigrateManager);
+</script>
