@@ -19,7 +19,11 @@ app.docs_url = "/docs"
 # url = "https://sweb3.grupotsiperu.com.pe:8000/docs"
 
 origins = [
-    "*"
+    "https://testing.grupotsiperu.com.pe:8844",
+    "https://testing.grupotsiperu.com.pe:8843",
+    "https://web.grupotsiperu.com.pe:8445",
+    "https://web.grupotsiperu.com.pe:8843",
+    "http://localhost:4321"
 ]
 
 

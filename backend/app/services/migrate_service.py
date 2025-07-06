@@ -46,8 +46,8 @@ class MigrateService:
             with open(script_path, 'r') as f:
                 sql_content = f.read()
 
-            # Reemplazar el placeholder PID_CIA
-            sql_to_execute = sql_content.replace("PID_CIA", str(company_id))
+            # Reemplazar el placeholder PIN_ID_CIA
+            sql_to_execute = sql_content.replace("PIN_ID_CIA", str(company_id))
 
             if db_connection_type == 'source':
                 cursor = self.src_conn.cursor()
@@ -59,10 +59,12 @@ class MigrateService:
                 logger.error(f"Tipo de conexión de base de datos inválido: {db_connection_type}")
                 return False
 
+            logger.info(f"Iniciando ejecución de sentencias para {script_name}...")
             # Ejecutar el script (puede contener múltiples sentencias separadas por ';')
-            for statement in sql_to_execute.split(';'):
+            for i, statement in enumerate(sql_to_execute.split(';')):
                 if statement.strip():
                     cursor.execute(statement)
+                    logger.info(f"Sentencia {i+1} de {script_name} ejecutada exitosamente.")
             connection.commit()
             logger.info(f"Script {script_name} ejecutado exitosamente en {db_connection_type} para ID_CIA {company_id}")
             return True

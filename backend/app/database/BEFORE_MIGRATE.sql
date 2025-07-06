@@ -1,6 +1,6 @@
 DELETE FROM usuarios_propiedades p
 WHERE
-        p.id_cia = PID_CIA
+        p.id_cia = PIN_ID_CIA
     AND NOT EXISTS (
         SELECT
             1
@@ -13,7 +13,7 @@ WHERE
 
 DELETE FROM permisos p
 WHERE
-        p.id_cia = PID_CIA
+        p.id_cia = PIN_ID_CIA
     AND NOT EXISTS (
         SELECT
             1
@@ -28,7 +28,7 @@ UPDATE movimientos_conciliacion
 SET
     cuenta = 'ND'
 WHERE
-        id_cia = PID_CIA
+        id_cia = PIN_ID_CIA
     AND TRIM(cuenta) IS NULL;
 
 INSERT INTO empresa_modulos (
@@ -52,7 +52,7 @@ INSERT INTO empresa_modulos (
       FROM
             permisos p
       WHERE
-               p.id_cia = PID_CIA
+               p.id_cia = PIN_ID_CIA
             AND NOT EXISTS (
                SELECT
                   1
@@ -87,7 +87,7 @@ INSERT INTO usuario_modulos (
       FROM
             permisos p
       WHERE
-               p.id_cia = PID_CIA
+               p.id_cia = PIN_ID_CIA
             AND NOT EXISTS (
                SELECT
                   1
