@@ -132,14 +132,14 @@
     </div>
   </section>
   <div
-    class="relative overflow-x-auto overflow-y-auto flex-1 min-h-96 max-h-96 p-4 bg-gray-100 dark:bg-gray-700 rounded-md"
+    class="relative overflow-x-auto overflow-y-auto flex-1 min-h-96 max-h-96 py-2 px-4 bg-gray-100 dark:bg-gray-700 rounded-md"
   >
-    <p class="text-gray-700 dark:text-gray-300" id="migration-status">
+    <p class="text-sm text-gray-700 dark:text-gray-200" id="migration-status">
       Waiting to start migration...
     </p>
     <div
       id="migration-log"
-      class="mt-4 text-sm text-gray-600 dark:text-gray-400 font-mono whitespace-pre-wrap"
+      class="mt-2 text-sm font-bold text-gray-700 dark:text-gray-200 font-mono whitespace-pre-wrap"
     >
     </div>
   </div>
@@ -170,11 +170,6 @@
     const printReportBtn = document.getElementById("print-report-btn");
     const printReportText = document.getElementById("print-report-text");
     const printReportLoading = document.getElementById("print-report-loading");
-
-    const refreshLogsBtn = document.getElementById("refresh-logs-btn");
-    const downloadLogsBtn = document.getElementById("download-logs-btn");
-    const migrationLogsContainer = document.getElementById("migration-logs-container");
-
     const migrationForm = document.getElementById("migration-form");
 
     if (
@@ -192,25 +187,18 @@
       !validationMessage ||
       !printReportBtn ||
       !printReportText ||
-      !printReportLoading ||
-      !refreshLogsBtn ||
-      !downloadLogsBtn ||
-      !migrationLogsContainer
+      !printReportLoading
     ) {
       console.error("Error: One or more migration elements not found.");
       return;
     }
 
-    // Initially disable the buttons
     startMigrationBtn.disabled = true;
     printReportBtn.disabled = true;
-    refreshLogsBtn.disabled = false; // Logs can be refreshed initially
-    downloadLogsBtn.disabled = false; // Logs can be downloaded initially
 
     const validateForm = () => {
       const sourceId = sourceCompanyIdInput.value;
       const destId = destCompanyIdInput.value;
-      // Basic validation: check if inputs are not empty and are numbers
       const isValid = sourceId !== '' && destId !== '' && !isNaN(Number(sourceId)) && !isNaN(Number(destId));
       startMigrationBtn.disabled = !isValid;
       printReportBtn.disabled = !isValid;
@@ -226,10 +214,8 @@
     sourceCompanyIdInput.addEventListener('input', validateForm);
     destCompanyIdInput.addEventListener('input', validateForm);
 
-    // Initial validation call
     validateForm();
 
-    // Update modal content when the button is clicked
     startMigrationBtn.addEventListener('click', () => {
       if (modalSourceId && modalDestId) {
         modalSourceId.textContent = sourceCompanyIdInput.value;
@@ -288,251 +274,6 @@
       }
     });
 
-    // --- Log Management ---
-    async function fetchMigrationLogs() {
-      refreshLogsBtn.disabled = true;
-      downloadLogsBtn.disabled = true;
-      migrationLogsContainer.innerHTML = `<tr><td colspan="1" class="px-6 py-4 text-gray-500">Loading logs...</td></tr>`;
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/erp/migrate/logs?log_type=migration`);
-        if (!response.ok) throw new Error("Error fetching logs");
-        const data = await response.json();
-        if (data.status !== 1.0) {
-          throw new Error(data.message || "Unknown error fetching logs");
-        }
-        renderMigrationLogs(data.list);
-      } catch (error) {
-        console.error("Error in fetchMigrationLogs:", error);
-        migrationLogsContainer.innerHTML = `<tr><td colspan="1" class="px-6 py-4 text-red-500">Could not load logs: ${error.message}.</td></tr>`;
-      } finally {
-        refreshLogsBtn.disabled = false;
-        downloadLogsBtn.disabled = false;
-      }
-    }
-
-    function renderMigrationLogs(logs) {
-      migrationLogsContainer.innerHTML = "";
-      if (logs.length === 0) {
-        migrationLogsContainer.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-gray-500">No logs available.</td></tr>`;
-        return;
-      }
-      logs.forEach((log) => {
-        const logRow = document.createElement("tr");
-        logRow.className = "bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200";
-        logRow.innerHTML = `
-          <td class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            ${log.filename}
-          </td>
-          <td class="px-6 py-1 w-fit whitespace-nowrap">
-            <button type="button" class="download-single-log-btn text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900" data-filename="${log.filename}" data-content="${encodeURIComponent(log.content)}">Download</button>
-          </td>
-        `;
-        migrationLogsContainer.appendChild(logRow);
-      });
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    function downloadSingleLog(filename, content) {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }
-
-    async function downloadMigrationLogs() {
-      downloadLogsBtn.disabled = true;
-      refreshLogsBtn.disabled = true;
-      try {
-        const response = await fetch(`${API_BASE_URL}/erp/migrate/logs?log_type=migration`);
-        if (!response.ok) throw new Error("Error downloading logs");
-        const data = await response.json();
-        if (data.status !== 1.0) {
-          throw new Error(data.message || "Unknown error downloading logs");
-        }
-        const logContent = data.list.map(log => log.content).join('\n\n'); // Join content with double newline for readability
-        const blob = new Blob([logContent], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'migration_logs.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error("Error in downloadMigrationLogs:", error);
-        alert(`Could not download logs: ${error.message}.`);
-      } finally {
-        downloadLogsBtn.disabled = false;
-        refreshLogsBtn.disabled = false;
-      }
-    }
-
-    // Initial fetch of logs
-    fetchMigrationLogs();
-
-    // Event Listeners for log buttons
-    refreshLogsBtn.addEventListener('click', fetchMigrationLogs);
-    downloadLogsBtn.addEventListener('click', downloadMigrationLogs);
-
-    migrationLogsContainer.addEventListener('click', (e) => {
-      const target = e.target;
-      if (target.classList.contains('download-single-log-btn')) {
-        const filename = target.dataset.filename;
-        const content = decodeURIComponent(target.dataset.content);
-        downloadSingleLog(filename, content);
-      }
-    });
-
     let ws = null;
 
     const startWebSocketMigration = (sourceId, destId) => {
@@ -542,7 +283,7 @@
       }
 
       migrationStatus.textContent = "Connecting to migration service...";
-      migrationLog.textContent = ""; // Clear previous logs
+      migrationLog.textContent = "";
 
       const wsUrl = `${API_BASE_URL.replace("http", "ws")}/migrate/all`;
       ws = new WebSocket(wsUrl);
@@ -555,7 +296,7 @@
           JSON.stringify({
             source_id_cia: sourceId,
             dest_id_cia: destId,
-            exceptions: [], // You can add logic for exceptions later if needed
+            exceptions: [],
           })
         );
       };
@@ -564,7 +305,7 @@
         const message = event.data;
         console.log("Received message:", message);
         migrationLog.textContent += message + "\n";
-        migrationLog.scrollTop = migrationLog.scrollHeight; // Scroll to bottom
+        migrationLog.scrollTop = migrationLog.scrollHeight;
       };
 
       ws.onclose = (event) => {
@@ -579,6 +320,6 @@
       };
     };
   }
-
-  document.addEventListener("DOMContentLoaded", initializeMigrateManager);
+  
+  initializeMigrateManager();
 </script>

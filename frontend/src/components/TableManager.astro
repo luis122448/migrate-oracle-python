@@ -1,7 +1,9 @@
-<div class="rounded-lg shadow-lg p-6 mt-6 flex flex-col max-h-screen bg-gray-100 dark:bg-slate-900">
+<div
+  class="rounded-lg shadow-lg p-6 mt-6 flex flex-col max-h-screen bg-gray-100 dark:bg-slate-900"
+>
   <h3 class="text-xl font-bold mb-4 dark:text-white">Migration Tables</h3>
   <section class="flex justify-between items-center mb-4">
-    <div>
+    <form class="flex items-start space-x-4">
       <input
         type="text"
         id="new-table-name"
@@ -9,14 +11,14 @@
         placeholder="Table Name"
         required
       />
-    </div>
-    <div class="flex items-center space-x-2">
       <button
         type="button"
         id="add-table-form"
-        class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+        class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 min-w-28"
         >Add Table</button
       >
+    </form>
+    <div class="flex items-center space-x-2">
       <button
         type="button"
         id="delete-all-btn"
@@ -44,7 +46,9 @@
       >
         <tr>
           <th scope="col" class="px-6 py-3"> TABLE NAME </th>
-          <th scope="col" class="px-6 py-3 w-fit whitespace-nowrap"> ACTIONS </th>
+          <th scope="col" class="px-6 py-3 w-fit whitespace-nowrap">
+            ACTIONS
+          </th>
         </tr>
       </thead>
       <tbody id="tables-container">
@@ -98,7 +102,10 @@
             stroke-width="2"
             d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
         </svg>
-        <h3 id="modal-text" class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+        <h3
+          id="modal-text"
+          class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400"
+        >
           Are you sure?
         </h3>
         <button
@@ -133,7 +140,7 @@
     const newTableNameInput = document.getElementById("new-table-name");
     const deleteAllBtn = document.getElementById("delete-all-btn");
     const restoreBtn = document.getElementById("restore-btn");
-    
+
     const modal = document.getElementById("confirmation-modal-table");
     const modalText = document.getElementById("modal-text");
     const confirmActionBtn = document.getElementById("confirm-action-btn");
@@ -141,10 +148,32 @@
 
     let actionToConfirm = null;
 
-    if (!tablesBody || !addTableButton || !newTableNameInput || !deleteAllBtn || !restoreBtn || !modal || !modalText || !confirmActionBtn || !cancelActionBtn) {
+    if (
+      !tablesBody ||
+      !addTableButton ||
+      !newTableNameInput ||
+      !deleteAllBtn ||
+      !restoreBtn ||
+      !modal ||
+      !modalText ||
+      !confirmActionBtn ||
+      !cancelActionBtn
+    ) {
       console.error("Error: One or more table manager elements not found.");
       return;
     }
+    
+    addTableButton.disabled = true;
+
+    const validateForm = () => {
+      const souceTable = newTableNameInput.value;
+      const isValid = souceTable !== '';
+      addTableButton.disabled = !isValid;
+    }
+
+    newTableNameInput.addEventListener('input',validateForm);
+
+    validateForm();
 
     // --- API Functions ---
     async function fetchTables() {
@@ -180,7 +209,8 @@
     }
 
     async function deleteTable(tableName) {
-      if (!confirm(`Are you sure you want to delete table "${tableName}"?`)) return;
+      if (!confirm(`Are you sure you want to delete table "${tableName}"?`))
+        return;
       try {
         const response = await fetch(
           `${API_BASE_URL}/config/tables/${tableName}`,
@@ -234,7 +264,8 @@
       }
       tables.forEach((table) => {
         const tableRow = document.createElement("tr");
-        tableRow.className = "bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200";
+        tableRow.className =
+          "bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200";
         tableRow.innerHTML = `
           <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
             ${table}
@@ -247,8 +278,6 @@
       });
     }
 
-    // --- Event Listeners ---
-
     document.addEventListener("DOMContentLoaded", fetchTables);
 
     addTableButton.addEventListener("click", () => {
@@ -259,26 +288,27 @@
     });
 
     tablesBody.addEventListener("click", (e) => {
-      const target = e.target.closest('button');
+      const target = e.target.closest("button");
       if (target && target.dataset.table) {
         deleteTable(target.dataset.table);
       }
     });
 
     deleteAllBtn.addEventListener("click", () => {
-        modalText.textContent = "Are you sure you want to delete ALL tables?";
-        actionToConfirm = deleteAllTables;
+      modalText.textContent = "Are you sure you want to delete ALL tables?";
+      actionToConfirm = deleteAllTables;
     });
 
     restoreBtn.addEventListener("click", () => {
-        modalText.textContent = "Are you sure you want to restore the configuration from backup?";
-        actionToConfirm = restoreTables;
+      modalText.textContent =
+        "Are you sure you want to restore the configuration from backup?";
+      actionToConfirm = restoreTables;
     });
 
     confirmActionBtn.addEventListener("click", () => {
-        if (actionToConfirm) {
-            actionToConfirm();
-        }
+      if (actionToConfirm) {
+        actionToConfirm();
+      }
     });
   }
 
