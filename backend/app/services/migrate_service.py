@@ -246,7 +246,9 @@ class MigrateService:
 
             log_entry += "-" * 60 + "\n"            
             log_entries.append(log_entry)            
-            logger.info(log_entry.strip())        
+            logger.info(log_entry.strip())
+            # Enviar progreso al WebSocket
+            logger.info(f"PROGRESS: {successful_migrations + failed_migrations}/{total_tables}")        
             
         # self.enable_all_triggers_global()        
         elapsed_time = round(time.time() - start_time, 2)        
