@@ -8,7 +8,7 @@ from fastapi import Depends, HTTPException
 from schemas.api_response_schema import ApiResponseSchema
 from configs.oracle_transactional import OracleTransaction
 from configs.oracle_warehouse import OracleWarehouse
-from utils.path import PATHLOG, PATHUTILS
+from utils.path import PATHLOG, PATHUTILS, PATHDATABASE
 from utils.logger_config import setup_migrate_service_logger
 
 # Configuración de logs: se registrará tanto en archivo como en consola.
@@ -31,6 +31,44 @@ class MigrateService:
         self.dst_conn = self.oracle_warehouse.connection
         self.src_cursor = self.src_conn.cursor()
         self.dst_cursor = self.dst_conn.cursor()
+
+    def execute_sql_script(self, script_name: str, company_id: int, db_connection_type: str) -> bool:
+        """
+        Ejecuta un script SQL, reemplazando el placeholder PID_CIA con el ID de compañía.
+        db_connection_type puede ser 'source' o 'destination'.
+        """
+        script_path = os.path.join(PATHDATABASE, script_name)
+        if not os.path.exists(script_path):
+            logger.error(f"Script SQL no encontrado: {script_name}")
+            return False
+
+        try:
+            with open(script_path, 'r') as f:
+                sql_content = f.read()
+
+            # Reemplazar el placeholder PID_CIA
+            sql_to_execute = sql_content.replace("PID_CIA", str(company_id))
+
+            if db_connection_type == 'source':
+                cursor = self.src_conn.cursor()
+                connection = self.src_conn
+            elif db_connection_type == 'destination':
+                cursor = self.dst_conn.cursor()
+                connection = self.dst_conn
+            else:
+                logger.error(f"Tipo de conexión de base de datos inválido: {db_connection_type}")
+                return False
+
+            # Ejecutar el script (puede contener múltiples sentencias separadas por ';')
+            for statement in sql_to_execute.split(';'):
+                if statement.strip():
+                    cursor.execute(statement)
+            connection.commit()
+            logger.info(f"Script {script_name} ejecutado exitosamente en {db_connection_type} para ID_CIA {company_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Error al ejecutar el script {script_name}: {e}")
+            return False
 
     def disable_triggers(self, table: str):
         """Deshabilita los triggers en la tabla destino."""
@@ -218,11 +256,16 @@ class MigrateService:
         successful_migrations = 0
         failed_migrations = 0
 
-        # self.disable_all_triggers_global()
         log_entries = []
         log_entries.append(f"📌 INICIO DE MIGRACIÓN - {timestamp}\n")
         log_entries.append(f"Source Company ID: {source_id_cia}\n")
         log_entries.append(f"Destination Company ID: {dest_id_cia}\n")
+
+        # Ejecutar scripts pre-migración
+        success = self.execute_sql_script("BEFORE_MIGRATE.sql", source_id_cia, 'source')
+        log_entries.append(f"Script BEFORE_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
+        log_entries.append("--- Finished Pre-Migration Scripts ---\n")
+        
         log_entries.append("=" * 60 + "\n")
 
         for table in tables:
@@ -275,6 +318,11 @@ class MigrateService:
         response.message = f"Proceso finalizado, {successful_migrations}/{total_tables} tablas migradas."
         response.timestamp = f"Finalizado en {minutes} min {seconds} seg."
         logger.info(response.message + " " + response.timestamp)
+
+        # Ejecutar scripts post-migración
+        success = self.execute_sql_script("AFTER_MIGRATE.sql", dest_id_cia, 'destination')
+        log_entries.append(f"Script AFTER_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
+        log_entries.append("--- Finished Post-Migration Scripts ---\n")
 
         return response
 
