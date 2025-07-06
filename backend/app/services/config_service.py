@@ -67,11 +67,14 @@ class ConfigService:
         return self._write_tables([])
 
     def restore_tables(self) -> list[str]:
-        """Restaura la lista de tablas desde el archivo de respaldo."""
+        """Restaura la lista de tablas desde el archivo de respaldo copiándolo directamente."""
         try:
-            with open(BACKUP_FILE, "r") as backup_f:
-                tables = [line.strip() for line in backup_f if line.strip()]
-            return self._write_tables(tables)
+            # Copiar el archivo de respaldo directamente al archivo de tablas
+            with open(BACKUP_FILE, "rb") as src, open(TABLES_FILE, "wb") as dst:
+                dst.write(src.read())
+            
+            # Devolver la lista de tablas leída del archivo restaurado
+            return self.get_tables()
         except FileNotFoundError:
             raise HTTPException(status_code=404, detail="No se encontró el archivo de respaldo (tables_backup.txt).")
         except Exception as e:

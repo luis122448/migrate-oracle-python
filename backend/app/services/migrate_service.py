@@ -255,6 +255,8 @@ class MigrateService:
             raise HTTPException(status_code=500, detail="Error al leer el archivo de tablas.")
 
         total_tables = len(tables)
+        total_steps = total_tables + 2  # +2 for BEFORE_MIGRATE.sql and AFTER_MIGRATE.sql
+        completed_steps = 0
         successful_migrations = 0
         failed_migrations = 0
 
@@ -267,6 +269,8 @@ class MigrateService:
         success = self.execute_sql_script("BEFORE_MIGRATE.sql", source_id_cia, 'source')
         log_entries.append(f"Script BEFORE_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
         log_entries.append("--- Finished Pre-Migration Scripts ---\n")
+        completed_steps += 1
+        logger.info(f"PROGRESS: {completed_steps}/{total_steps}")
         
         log_entries.append("=" * 60 + "\n")
 
@@ -292,8 +296,9 @@ class MigrateService:
             log_entry += "-" * 60 + "\n"            
             log_entries.append(log_entry)            
             logger.info(log_entry.strip())
+            completed_steps += 1
             # Enviar progreso al WebSocket
-            logger.info(f"PROGRESS: {successful_migrations + failed_migrations}/{total_tables}")        
+            logger.info(f"PROGRESS: {completed_steps}/{total_steps}")        
             
         # self.enable_all_triggers_global()        
         elapsed_time = round(time.time() - start_time, 2)        
@@ -325,6 +330,8 @@ class MigrateService:
         success = self.execute_sql_script("AFTER_MIGRATE.sql", dest_id_cia, 'destination')
         log_entries.append(f"Script AFTER_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
         log_entries.append("--- Finished Post-Migration Scripts ---\n")
+        completed_steps += 1
+        logger.info(f"PROGRESS: {completed_steps}/{total_steps}")
 
         return response
 
