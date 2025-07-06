@@ -23,7 +23,7 @@ class ConfigService:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error al leer el archivo de tablas: {e}")
 
-    def _write_tables(self, tables: list[str], sort_tables: bool = True):
+    def write_tables(self, tables: list[str], sort_tables: bool = True):
         """Escribe la lista de tablas en el archivo, asegurando mayúsculas y sin duplicados. Opcionalmente, las ordena."""
         # Convierte todo a mayúsculas y elimina duplicados, manteniendo el orden de inserción si no se ordena.
         seen = set()
@@ -50,7 +50,7 @@ class ConfigService:
             raise HTTPException(status_code=400, detail=f"La tabla '{table_name}' ya existe en la lista.")
         
         tables.append(table_name)
-        return self._write_tables(tables)
+        return self.write_tables(tables)
 
     def delete_table(self, table_name: str) -> list[str]:
         """Elimina una tabla de la lista."""
@@ -60,11 +60,11 @@ class ConfigService:
             raise HTTPException(status_code=404, detail=f"La tabla '{table_name}' no se encontró en la lista.")
 
         new_tables = [t for t in tables if t.upper() != table_to_delete]
-        return self._write_tables(new_tables)
+        return self.write_tables(new_tables)
 
     def delete_all_tables(self) -> list[str]:
         """Elimina todas las tablas del archivo."""
-        return self._write_tables([])
+        return self.write_tables([])
 
     def restore_tables(self) -> list[str]:
         """Restaura la lista de tablas desde el archivo de respaldo copiándolo directamente."""
