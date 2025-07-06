@@ -162,10 +162,11 @@
   <section class="mt-4">
     <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
       <div
+        id="progress-bar"
         class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-        style="width: 45%"
+        style="width: 0%"
       >
-        45%
+        <span id="progress-text">0%</span>
       </div>
     </div>
   </section>
@@ -197,6 +198,8 @@
     const printReportText = document.getElementById("print-report-text");
     const printReportLoading = document.getElementById("print-report-loading");
     const migrationForm = document.getElementById("migration-form");
+    const progressBar = document.getElementById("progress-bar");
+    const progressText = document.getElementById("progress-text");
 
     if (
       !startMigrationBtn ||
@@ -213,7 +216,9 @@
       !validationMessage ||
       !printReportBtn ||
       !printReportText ||
-      !printReportLoading
+      !printReportLoading ||
+      !progressBar ||
+      !progressText
     ) {
       console.error("Error: One or more migration elements not found.");
       return;
@@ -315,6 +320,12 @@
 
       migrationStatus.textContent = "Connecting to migration service...";
       migrationLog.textContent = "";
+      if (progressBar) {
+        progressBar.style.width = "0%";
+      }
+      if (progressText) {
+        progressText.textContent = "0%";
+      }
 
       const wsUrl = `${API_BASE_URL.replace("http", "ws")}/migrate/all`;
       ws = new WebSocket(wsUrl);
@@ -332,12 +343,7 @@
         );
       };
 
-      ws.onmessage = (event) => {
-        const message = event.data;
-        console.log("Received message:", message);
-        migrationLog.textContent += message + "\n";
-        migrationLog.scrollTop = migrationLog.scrollHeight;
-      };
+      ws.onmessage = (event) => {        const message = event.data;        if (message.startsWith("PROGRESS:")) {          const parts = message.substring(9).split("/");          const current = parseInt(parts[0], 10);          const total = parseInt(parts[1], 10);          const percentage = Math.round((current / total) * 100);          if (progressBar) {            progressBar.style.width = `${percentage}%`;          }          if (progressText) {            progressText.textContent = `${percentage}%`;          }        } else {          console.log("Received message:", message);          migrationLog.textContent += message + "\n";          migrationLog.scrollTop = migrationLog.scrollHeight;        }      };
 
       ws.onclose = (event) => {
         migrationStatus.textContent = `Disconnected. Code: ${event.code}, Reason: ${event.reason}`;
