@@ -11,6 +11,7 @@ venv
 # Node.js Configuration
 node_modules
 npm-debug.log
+frontend/dist
 
 # App Configuration
 backend/logs/*
