@@ -19,34 +19,14 @@ const siteUrl = "https://your-app-domain.com";
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/assets/icons/favicon-96x96.png" />
-    <meta name="generator" content={Astro.generator} />
-
-    <!-- Primary Meta Tags -->
-    <title>${title} | ${siteName}</title>
-    <meta name="description" content="${description || siteDescription}" />
-    <meta name="keywords" content="${siteKeywords}" />
-    <link rel="canonical" href="${siteUrl}${Astro.url.pathname}" />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="${siteUrl}${Astro.url.pathname}" />
-    <meta property="og:title" content="${title} | ${siteName}" />
-    <meta property="og:description" content="${description || siteDescription}" />
-    <meta property="og:image" content="${siteUrl}${siteImage}" />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="${siteUrl}${Astro.url.pathname}" />
-    <meta property="twitter:title" content="${title} | ${siteName}" />
-    <meta property="twitter:description" content="${description || siteDescription}" />
-    <meta property="twitter:image" content="${siteUrl}${siteImage}" />
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="/node_modules/flowbite/dist/flowbite.min.js" is:inline></script>
-  </head>
+	<meta charset="UTF-8" />
+	<meta name="description" content="Web application for migrating data from Oracle to Oracle." />
+	<meta name="viewport" content="width=device-width" />
+	<link rel="icon" type="image/png" href="/icon.png" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<meta name="generator" content={Astro.generator} />
+	<title>{title} - Oracle to Oracle Migration</title>
+</head>
   <body class="bg-slate-50 dark:bg-slate-900 flex-col justify-center w-full h-screen">
     <div class=" max-w-screen-xl mx-auto">
       <Header />
