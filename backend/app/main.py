@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from middlewares.error_handler import ExceptionHandlerMiddleware, http_exception_handler
 from routers.migrate_router import migrate_router
-from routers.auth_router import auth_router
 from routers.config_router import config_router
 from utils.path import create_dir_logs, get_path_log, get_path_project
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -42,7 +41,6 @@ app.add_middleware(
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 
 # Add routes
-app.include_router(auth_router)
 app.include_router(migrate_router)
 app.include_router(config_router)
 
