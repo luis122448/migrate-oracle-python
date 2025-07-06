@@ -16,6 +16,7 @@ services:
       - "8081:8000"
     volumes:
       - /home/luis122448/Desktop/repository-tsi/migrate-oracle-python/backend/logs /opt/logs
+    network_mode: host
 
   frontend:
     env_file:

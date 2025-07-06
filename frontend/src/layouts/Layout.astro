@@ -2,15 +2,9 @@
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
-interface Props {
-  title: string;
-  description: string;
-}
-
-const { title, description } = Astro.props;
+const title = "Oracle Autonomous Migration Tool (OAMT)";
+const description = "An efficient tool to migrate specific tables or records from Oracle databases to Oracle Autonomous Database. Simplify your data migration with real-time monitoring and detailed reports.";
 const canonicalURL = "";
-const siteName = "Oracle Autonomous Migration Tool (OAMT)";
-const siteDescription = "An efficient tool to migrate specific tables or records from Oracle databases to Oracle Autonomous Database. Simplify your data migration with real-time monitoring and detailed reports.";
 const siteKeywords = "Oracle, Autonomous Database, Migration, Data Migration, Oracle Cloud, Database Migration, OAMT, Tables, Records";
 const siteImage = "/assets/images/oamt-social-share.jpg";
 const siteUrl = "https://your-app-domain.com";
@@ -25,7 +19,11 @@ const siteUrl = "https://your-app-domain.com";
 	<link rel="icon" type="image/png" href="/icon.png" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="generator" content={Astro.generator} />
-	<title>{title} - Oracle to Oracle Migration</title>
+  <!-- Primary Meta Tags -->
+  <title>{title}</title>
+  <meta name="title" content={title} />
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
   <script src="/node_modules/flowbite/dist//flowbite.min.js" is:inline></script>
 </head>
   <body class="bg-slate-50 dark:bg-slate-900 flex-col justify-center w-full h-screen">
