@@ -1,6 +1,6 @@
 # Oracle to Oracle Autonomous Database Migration Web Application
 
-![Project Image](./frontend/public/icon.png)
+![Project Image](./frontend/public/migrate-app.png)
 
 ## Overview
 
