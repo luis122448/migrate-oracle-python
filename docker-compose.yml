@@ -27,6 +27,6 @@ services:
     environment:
       MIGRATE_API_BASE_URL: http://localhost:8081
     ports:
-      - "8082:80"
+      - "80:80"
     depends_on:
       - backend
