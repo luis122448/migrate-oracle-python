@@ -17,12 +17,17 @@ from reportlab.lib.units import inch
 migrate_router = APIRouter()
 
 @migrate_router.post('/migrate/all', tags=["MIGRATE"], response_model=ApiResponseSchema)
-def migrate_all(request_body: MigrateSchema, service: MigrateService = Depends()):
+def migrate_all(
+    request_body: MigrateSchema,
+    service: MigrateService = Depends()
+):
     try:
         object_response = service.migrate_all(
             source_id_cia=request_body.source_id_cia,
             dest_id_cia=request_body.dest_id_cia,
-            exceptions=request_body.exceptions
+            exceptions=request_body.exceptions,
+            run_pre_migration_script=request_body.run_pre_migration_script,
+            run_post_migration_script=request_body.run_post_migration_script
         )
         return JSONResponse(content=jsonable_encoder(object_response), status_code=status.HTTP_200_OK)
     except Exception as e:
@@ -42,13 +47,17 @@ async def websocket_migrate_all(websocket: WebSocket, service: MigrateService = 
         source_id_cia = data["source_id_cia"]
         dest_id_cia = data["dest_id_cia"]
         exceptions = data.get("exceptions", [])
+        run_pre_migration_script = data.get("run_pre_migration_script", True)
+        run_post_migration_script = data.get("run_post_migration_script", True)
 
         # Ejecutar la migración en un hilo para no bloquear el bucle de eventos
         await run_in_threadpool(
             service.migrate_all,
             source_id_cia=source_id_cia,
             dest_id_cia=dest_id_cia,
-            exceptions=exceptions
+            exceptions=exceptions,
+            run_pre_migration_script=run_pre_migration_script,
+            run_post_migration_script=run_post_migration_script
         )
     except WebSocketDisconnect:
         logger.info("Cliente desconectado")

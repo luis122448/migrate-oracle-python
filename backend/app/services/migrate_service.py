@@ -234,7 +234,7 @@ class MigrateService:
 
         return total_records, error_messages
 
-    def migrate_all(self, source_id_cia: int, dest_id_cia: int, exceptions: list[str] = []) -> ApiResponseSchema:
+    def migrate_all(self, source_id_cia: int, dest_id_cia: int, exceptions: list[str] = [], run_pre_migration_script: bool = True, run_post_migration_script: bool = True) -> ApiResponseSchema:
         """
         Realiza la migración de todas las tablas listadas en el archivo 'tables.txt'.
         Se espera que el archivo contenga un nombre de tabla por línea.
@@ -266,11 +266,15 @@ class MigrateService:
         log_entries.append(f"Destination Company ID: {dest_id_cia}\n")
 
         # Ejecutar scripts pre-migración
-        success = self.execute_sql_script("BEFORE_MIGRATE.sql", source_id_cia, 'source')
-        log_entries.append(f"Script BEFORE_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
-        log_entries.append("--- Finished Pre-Migration Scripts ---\n")
-        completed_steps += 1
-        logger.info(f"PROGRESS: {completed_steps}/{total_steps}")
+        if run_pre_migration_script:
+            success = self.execute_sql_script("BEFORE_MIGRATE.sql", source_id_cia, 'source')
+            log_entries.append(f"Script BEFORE_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
+            log_entries.append("--- Finished Pre-Migration Scripts ---\n")
+            completed_steps += 1
+            logger.info(f"PROGRESS: {completed_steps}/{total_steps}")
+        else:
+            log_entries.append("Skipping BEFORE_MIGRATE.sql as requested.\n")
+            logger.info("Skipping BEFORE_MIGRATE.sql as requested.")
         
         log_entries.append("=" * 60 + "\n")
 
@@ -327,11 +331,15 @@ class MigrateService:
         logger.info(response.message + " " + response.timestamp)
 
         # Ejecutar scripts post-migración
-        success = self.execute_sql_script("AFTER_MIGRATE.sql", dest_id_cia, 'destination')
-        log_entries.append(f"Script AFTER_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
-        log_entries.append("--- Finished Post-Migration Scripts ---\n")
-        completed_steps += 1
-        logger.info(f"PROGRESS: {completed_steps}/{total_steps}")
+        if run_post_migration_script:
+            success = self.execute_sql_script("AFTER_MIGRATE.sql", dest_id_cia, 'destination')
+            log_entries.append(f"Script AFTER_MIGRATE.sql: {'SUCCESS' if success else 'FAILED'}\n")
+            log_entries.append("--- Finished Post-Migration Scripts ---\n")
+            completed_steps += 1
+            logger.info(f"PROGRESS: {completed_steps}/{total_steps}")
+        else:
+            log_entries.append("Skipping AFTER_MIGRATE.sql as requested.\n")
+            logger.info("Skipping AFTER_MIGRATE.sql as requested.")
 
         return response
 

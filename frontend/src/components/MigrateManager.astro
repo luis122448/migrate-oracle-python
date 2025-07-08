@@ -62,16 +62,46 @@
             >
               <path
                 d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                fill="#E5E7EB"></path>
+                fill="#E5E7EB"
+              ></path>
               <path
                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                fill="currentColor"></path>
+                fill="currentColor"
+              ></path>
             </svg>
             Loading...
           </span>
         </button>
       </div>
     </form>
+  </section>
+  <section class="mt-2 flex items-start space-x-12">
+    <div class="flex items-center mb-4">
+      <input
+        id="pre-scripts-checkbox"
+        type="checkbox"
+        checked
+        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+      />
+      <label
+        for="pre-scripts-checkbox"
+        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >Pre Scripts Execution</label
+      >
+    </div>
+    <div class="flex items-center">
+      <input
+        id="post-scripts-checkbox"
+        type="checkbox"
+        checked
+        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+      />
+      <label
+        for="post-scripts-checkbox"
+        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >Post Scripts Execution</label
+      >
+    </div>
   </section>
   <section class="mb-4">
     <p id="validation-message" class="text-red-500 text-sm mt-2 hidden">
@@ -102,7 +132,8 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            ></path>
           </svg>
           <span class="sr-only">Close modal</span>
         </button>
@@ -119,14 +150,17 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            ></path>
           </svg>
           <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
             Are you sure you want to start migration from company <span
               id="modal-source-id"
-              class="font-bold"></span> to company <span
+              class="font-bold"
+            ></span> to company <span
               id="modal-dest-id"
-              class="font-bold"></span>?
+              class="font-bold"
+            ></span>?
           </h3>
           <button
             id="confirm-migration-btn"
@@ -156,8 +190,7 @@
     <div
       id="migration-log"
       class="mt-2 text-sm font-bold text-gray-700 dark:text-gray-200 font-mono whitespace-pre-wrap"
-    >
-    </div>
+    ></div>
   </section>
   <section class="mt-4">
     <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
@@ -181,10 +214,21 @@
 
   function initializeMigrateManager() {
     const startMigrationBtn = document.getElementById("start-migration-btn");
-    const sourceCompanyIdInput = document.getElementById("source-company-id");
-    const destCompanyIdInput = document.getElementById("dest-company-id");
+    const sourceCompanyIdInput = document.getElementById(
+      "source-company-id"
+    ) as HTMLInputElement;
+    const destCompanyIdInput = document.getElementById(
+      "dest-company-id"
+    ) as HTMLInputElement;
     const migrationStatus = document.getElementById("migration-status");
     const migrationLog = document.getElementById("migration-log");
+
+    const preScriptsCheckbox = document.getElementById(
+      "pre-scripts-checkbox"
+    ) as HTMLInputElement;
+    const postScriptsCheckbox = document.getElementById(
+      "post-scripts-checkbox"
+    ) as HTMLInputElement;
 
     const confirmationModal = document.getElementById("confirmation-modal");
     const modalSourceId = document.getElementById("modal-source-id");
@@ -207,6 +251,8 @@
       !destCompanyIdInput ||
       !migrationStatus ||
       !migrationLog ||
+      !preScriptsCheckbox ||
+      !postScriptsCheckbox ||
       !confirmationModal ||
       !modalSourceId ||
       !modalDestId ||
@@ -245,7 +291,6 @@
       }
     };
 
-    // Add event listeners for input changes to validate the form
     sourceCompanyIdInput.addEventListener("input", validateForm);
     destCompanyIdInput.addEventListener("input", validateForm);
 
@@ -258,19 +303,23 @@
       }
     });
 
-    // Handle confirmation button click
     confirmMigrationBtn.addEventListener("click", () => {
       const sourceId = sourceCompanyIdInput.value;
       const destId = destCompanyIdInput.value;
-      startWebSocketMigration(sourceId, destId);
+      const runPreMigrationScript = preScriptsCheckbox.checked;
+      const runPostMigrationScript = postScriptsCheckbox.checked;
+      startWebSocketMigration(
+        sourceId,
+        destId,
+        runPreMigrationScript,
+        runPostMigrationScript
+      );
     });
 
-    // Handle print report button click
     printReportBtn.addEventListener("click", async () => {
       const sourceId = sourceCompanyIdInput.value;
       const destId = destCompanyIdInput.value;
 
-      // Disable button and show loading indicator
       printReportBtn.disabled = true;
       printReportText.classList.add("hidden");
       printReportLoading.classList.remove("hidden");
@@ -284,14 +333,14 @@
           body: JSON.stringify({
             source_id_cia: Number(sourceId),
             dest_id_cia: Number(destId),
-            exceptions: [], // Add logic for exceptions if needed
+            exceptions: [],
           }),
         });
 
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
-          window.open(url, "_blank"); // Open PDF in a new tab
+          window.open(url, "_blank");
         } else {
           const errorData = await response.json();
           console.error("Error generating PDF:", errorData);
@@ -303,7 +352,6 @@
         console.error("Network error or unexpected issue:", error);
         alert("An unexpected error occurred while trying to generate the PDF.");
       } finally {
-        // Re-enable button and hide loading indicator
         printReportBtn.disabled = false;
         printReportText.classList.remove("hidden");
         printReportLoading.classList.add("hidden");
@@ -312,7 +360,12 @@
 
     let ws = null;
 
-    const startWebSocketMigration = (sourceId, destId) => {
+    const startWebSocketMigration = (
+      sourceId,
+      destId,
+      runPreMigrationScript,
+      runPostMigrationScript
+    ) => {
       if (ws && ws.readyState === WebSocket.OPEN) {
         console.log("WebSocket already open.");
         return;
@@ -339,6 +392,8 @@
             source_id_cia: sourceId,
             dest_id_cia: destId,
             exceptions: [],
+            run_pre_migration_script: runPreMigrationScript,
+            run_post_migration_script: runPostMigrationScript,
           })
         );
       };
@@ -360,3 +415,4 @@
 
   initializeMigrateManager();
 </script>
+
