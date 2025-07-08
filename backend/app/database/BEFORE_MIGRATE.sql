@@ -1,3 +1,113 @@
+INSERT INTO asienhea (
+   id_cia,
+   periodo,
+   mes,
+   libro,
+   asiento,
+   concep
+)
+   (
+      SELECT DISTINCT
+            m.id_cia,
+            m.periodo,
+            m.mes,
+            m.libro,
+            m.asiento,
+            'ASIENTO POR ELIMINADO POR REGULARIZAR'
+      FROM
+            movimientos m
+      WHERE
+               m.id_cia = PIN_ID_CIA
+            AND NOT EXISTS (
+               SELECT
+                  1
+               FROM
+                  asienhea a
+               WHERE
+                        a.id_cia = m.id_cia
+                  AND a.periodo = m.periodo
+                  AND a.mes = m.mes
+                  AND a.libro = m.libro
+                  AND a.asiento = m.asiento
+            )
+   );
+
+DELETE FROM cliente_clase cc
+WHERE
+        cc.id_cia = PIN_ID_CIA
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            cliente cc1
+        WHERE
+                cc1.id_cia = cc.id_cia
+            AND cc1.codcli = cc.codcli
+    );
+
+DELETE FROM cliente_codpag cc
+WHERE
+        cc.id_cia = PIN_ID_CIA
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            cliente cc1
+        WHERE
+                cc1.id_cia = cc.id_cia
+            AND cc1.codcli = cc.codcli
+    );
+
+INSERT INTO cliente (
+   id_cia,
+   codcli,
+   razonc
+)
+   (
+      SELECT
+            cc.id_cia,
+            cc.codpro,
+            cc.razon
+      FROM
+            compr010 cc
+      WHERE
+               cc.id_cia = PIN_ID_CIA
+            AND NOT EXISTS (
+               SELECT
+                  1
+               FROM
+                  cliente cc1
+               WHERE
+                        cc1.id_cia = cc.id_cia
+                  AND cc1.codcli = cc.codpro
+            )
+   );
+
+INSERT INTO cliente (
+    id_cia,
+    codcli,
+    razonc
+)
+    (
+        SELECT
+            cc.id_cia,
+            cc.codcli,
+            'PROVEEDOR ELIMINADO'
+        FROM
+            prov105 cc
+        WHERE
+                cc.id_cia = PIN_ID_CIA
+            AND NOT EXISTS (
+                SELECT
+                    1
+                FROM
+                    cliente cc1
+                WHERE
+                        cc1.id_cia = cc.id_cia
+                    AND cc1.codcli = cc.codcli
+            )
+    );
+
 DELETE FROM usuarios_propiedades p
 WHERE
         p.id_cia = PIN_ID_CIA
