@@ -214,28 +214,16 @@
 
   function initializeMigrateManager() {
     const startMigrationBtn = document.getElementById("start-migration-btn");
-    const sourceCompanyIdInput = document.getElementById(
-      "source-company-id"
-    ) as HTMLInputElement;
-    const destCompanyIdInput = document.getElementById(
-      "dest-company-id"
-    ) as HTMLInputElement;
+    const sourceCompanyIdInput = document.getElementById("source-company-id");
+    const destCompanyIdInput = document.getElementById("dest-company-id");
     const migrationStatus = document.getElementById("migration-status");
     const migrationLog = document.getElementById("migration-log");
-
-    const preScriptsCheckbox = document.getElementById(
-      "pre-scripts-checkbox"
-    ) as HTMLInputElement;
-    const postScriptsCheckbox = document.getElementById(
-      "post-scripts-checkbox"
-    ) as HTMLInputElement;
-
+    const preScriptsCheckbox = document.getElementById("pre-scripts-checkbox");
+    const postScriptsCheckbox = document.getElementById("post-scripts-checkbox");
     const confirmationModal = document.getElementById("confirmation-modal");
     const modalSourceId = document.getElementById("modal-source-id");
     const modalDestId = document.getElementById("modal-dest-id");
-    const confirmMigrationBtn = document.getElementById(
-      "confirm-migration-btn"
-    );
+    const confirmMigrationBtn = document.getElementById("confirm-migration-btn");
     const cancelMigrationBtn = document.getElementById("cancel-migration-btn");
     const validationMessage = document.getElementById("validation-message");
     const printReportBtn = document.getElementById("print-report-btn");
