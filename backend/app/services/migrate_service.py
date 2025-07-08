@@ -60,8 +60,8 @@ class MigrateService:
                 return False
 
             logger.info(f"Iniciando ejecución de sentencias para {script_name}...")
-            # Ejecutar el script (puede contener múltiples sentencias separadas por ';')
-            for i, statement in enumerate(sql_to_execute.split(';')):
+            # Ejecutar el script (puede contener múltiples sentencias separadas por '/')
+            for i, statement in enumerate(sql_to_execute.split('/')):
                 if statement.strip():
                     cursor.execute(statement)
                     logger.info(f"Sentencia {i+1} de {script_name} ejecutada exitosamente.")

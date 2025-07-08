@@ -30,8 +30,8 @@ INSERT INTO asienhea (
                   AND a.libro = m.libro
                   AND a.asiento = m.asiento
             )
-   );
-
+   )
+/
 DELETE FROM cliente_clase cc
 WHERE
         cc.id_cia = PIN_ID_CIA
@@ -43,8 +43,8 @@ WHERE
         WHERE
                 cc1.id_cia = cc.id_cia
             AND cc1.codcli = cc.codcli
-    );
-
+    )
+/
 DELETE FROM cliente_codpag cc
 WHERE
         cc.id_cia = PIN_ID_CIA
@@ -56,8 +56,8 @@ WHERE
         WHERE
                 cc1.id_cia = cc.id_cia
             AND cc1.codcli = cc.codcli
-    );
-
+    )
+/
 INSERT INTO cliente (
    id_cia,
    codcli,
@@ -81,8 +81,8 @@ INSERT INTO cliente (
                         cc1.id_cia = cc.id_cia
                   AND cc1.codcli = cc.codpro
             )
-   );
-
+   )
+/
 INSERT INTO cliente (
     id_cia,
     codcli,
@@ -106,8 +106,8 @@ INSERT INTO cliente (
                         cc1.id_cia = cc.id_cia
                     AND cc1.codcli = cc.codcli
             )
-    );
-
+    )
+/
 DELETE FROM usuarios_propiedades p
 WHERE
         p.id_cia = PIN_ID_CIA
@@ -119,8 +119,8 @@ WHERE
         WHERE
                 u.id_cia = p.id_cia
             AND u.coduser = p.coduser
-    );
-
+    )
+/
 DELETE FROM permisos p
 WHERE
         p.id_cia = PIN_ID_CIA
@@ -132,15 +132,15 @@ WHERE
         WHERE
                 u.id_cia = p.id_cia
             AND u.coduser = p.coduser
-    );
-
+    )
+/
 UPDATE movimientos_conciliacion
 SET
     cuenta = 'ND'
 WHERE
         id_cia = PIN_ID_CIA
-    AND TRIM(cuenta) IS NULL;
-
+    AND TRIM(cuenta) IS NULL
+/
 INSERT INTO empresa_modulos (
    id_cia,
    codmod,
@@ -172,8 +172,8 @@ INSERT INTO empresa_modulos (
                         um.id_cia = p.id_cia
                   AND um.codmod = p.codmod
             )
-   );
-
+   )
+/
 INSERT INTO usuario_modulos (
    id_cia,
    codmod,
@@ -208,4 +208,4 @@ INSERT INTO usuario_modulos (
                   AND um.codmod = p.codmod
                   AND um.coduser = p.coduser
             )
-   );
+   )
