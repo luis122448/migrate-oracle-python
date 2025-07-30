@@ -1,7 +1,6 @@
 import os, logging
 import oracledb
 from dotenv import load_dotenv
-from utils.path import BASEDIR
 from middlewares.output_type_handler import output_type_handler
 
 logging.basicConfig(level=logging.INFO)
@@ -10,24 +9,21 @@ logger = logging.getLogger(__name__)
 # Load the environment variables
 load_dotenv()
 
-instant_client_path = os.path.join(BASEDIR, "oracle_home", "instantclient")
-oracledb.init_oracle_client(lib_dir=instant_client_path)
-
-DB_ORACLE_USER_TRANSACTIONAL = os.getenv("DB_ORACLE_USER_TRANSACTIONAL")
-DB_ORACLE_PASSWORD_TRANSACTIONAL = os.getenv("DB_ORACLE_PASSWORD_TRANSACTIONAL")
-DB_ORACLE_DSN_TRANSACTIONAL = os.getenv("DB_ORACLE_DSN_TRANSACTIONAL")
+DB_ORACLE_USER_WAREHOUSE = os.getenv("DB_ORACLE_USER_WAREHOUSE")
+DB_ORACLE_PASSWORD_WAREHOUSE = os.getenv("DB_ORACLE_PASSWORD_WAREHOUSE")
+DB_ORACLE_DSN_WAREHOUSE = os.getenv("DB_ORACLE_DSN_WAREHOUSE")
 
 
-def get_oracle_transactional_connection():
+def get_oracle_autonomous_connection():
     try:
-        oracle_transactional_connection = oracledb.connect(
-            user=DB_ORACLE_USER_TRANSACTIONAL,
-            password=DB_ORACLE_PASSWORD_TRANSACTIONAL,
-            dsn=DB_ORACLE_DSN_TRANSACTIONAL,
+        oracle_autonomous_connection = oracledb.connect(
+            user=DB_ORACLE_USER_WAREHOUSE,
+            password=DB_ORACLE_PASSWORD_WAREHOUSE,
+            dsn=DB_ORACLE_DSN_WAREHOUSE,
             disable_oob=True
         )
-        oracle_transactional_connection.outputtypehandler = output_type_handler
-        return oracle_transactional_connection
+        oracle_autonomous_connection.outputtypehandler = output_type_handler
+        return oracle_autonomous_connection
     except oracledb.DatabaseError as e:
         logger.error("Error de base de datos durante la conexión: %s", e)
         raise
@@ -39,12 +35,12 @@ def get_oracle_transactional_connection():
         raise
 
 
-def get_reconnect_oracle_transactional(oracle_transactional_connection):
+def get_reconnect_oracle_autonomous(oracle_autonomous_connection):
     try:
-        if testing_oracle_transactional_connection(oracle_transactional_connection):
-            return oracle_transactional_connection
+        if testing_oracle_autonomous_connection(oracle_autonomous_connection):
+            return oracle_autonomous_connection
         else:
-            return get_oracle_transactional_connection()
+            return get_oracle_autonomous_connection()
     except oracledb.DatabaseError as e:
         logger.error("Error de base de datos durante la conexión: %s", e)
         raise
@@ -56,12 +52,12 @@ def get_reconnect_oracle_transactional(oracle_transactional_connection):
         raise
 
 
-def testing_oracle_transactional_connection(oracle_transactional_connection) -> bool:
+def testing_oracle_autonomous_connection(oracle_autonomous_connection) -> bool:
     try:
-        if oracle_transactional_connection is None:
+        if oracle_autonomous_connection is None:
             return False
-        oracle_transactional_connection.outputtypehandler = output_type_handler
-        cursor = oracle_transactional_connection.cursor()
+        oracle_autonomous_connection.outputtypehandler = output_type_handler
+        cursor = oracle_autonomous_connection.cursor()
         cursor.execute("SELECT * FROM v$version")
         version = cursor.fetchone()[0]
         cursor.close()
@@ -78,13 +74,13 @@ def testing_oracle_transactional_connection(oracle_transactional_connection) -> 
         return False
 
 
-class OracleTransaction:
+class OracleWarehouse:
     def __init__(self):
-        self.connection = get_oracle_transactional_connection()
-
+        self.connection = get_oracle_autonomous_connection()
+    
     def __enter__(self):
-        self.connection = get_reconnect_oracle_transactional(self.connection)
+        self.connection = get_reconnect_oracle_autonomous(self.connection)
         return self.connection
-
+    
     def __exit__(self, exc_type, exc_value, traceback):
         self.connection.close()

@@ -1,6 +1,7 @@
 import os, logging
 import oracledb
 from dotenv import load_dotenv
+from utils.path import BASEDIR
 from middlewares.output_type_handler import output_type_handler
 
 logging.basicConfig(level=logging.INFO)
@@ -9,21 +10,24 @@ logger = logging.getLogger(__name__)
 # Load the environment variables
 load_dotenv()
 
-DB_ORACLE_USER_WAREHOUSE = os.getenv("DB_ORACLE_USER_WAREHOUSE")
-DB_ORACLE_PASSWORD_WAREHOUSE = os.getenv("DB_ORACLE_PASSWORD_WAREHOUSE")
-DB_ORACLE_DSN_WAREHOUSE = os.getenv("DB_ORACLE_DSN_WAREHOUSE")
+instant_client_path = os.path.join(BASEDIR, "oracle_home", "instantclient")
+oracledb.init_oracle_client(lib_dir=instant_client_path)
+
+DB_ORACLE_USER_TRANSACTIONAL = os.getenv("DB_ORACLE_USER_TRANSACTIONAL")
+DB_ORACLE_PASSWORD_TRANSACTIONAL = os.getenv("DB_ORACLE_PASSWORD_TRANSACTIONAL")
+DB_ORACLE_DSN_TRANSACTIONAL = os.getenv("DB_ORACLE_DSN_TRANSACTIONAL")
 
 
-def get_oracle_warehouse_connection():
+def get_oracle_base_connection():
     try:
-        oracle_warehouse_connection = oracledb.connect(
-            user=DB_ORACLE_USER_WAREHOUSE,
-            password=DB_ORACLE_PASSWORD_WAREHOUSE,
-            dsn=DB_ORACLE_DSN_WAREHOUSE,
+        oracle_base_connection = oracledb.connect(
+            user=DB_ORACLE_USER_TRANSACTIONAL,
+            password=DB_ORACLE_PASSWORD_TRANSACTIONAL,
+            dsn=DB_ORACLE_DSN_TRANSACTIONAL,
             disable_oob=True
         )
-        oracle_warehouse_connection.outputtypehandler = output_type_handler
-        return oracle_warehouse_connection
+        oracle_base_connection.outputtypehandler = output_type_handler
+        return oracle_base_connection
     except oracledb.DatabaseError as e:
         logger.error("Error de base de datos durante la conexión: %s", e)
         raise
@@ -35,12 +39,12 @@ def get_oracle_warehouse_connection():
         raise
 
 
-def get_reconnect_oracle_warehouse(oracle_warehouse_connection):
+def get_reconnect_oracle_base(oracle_base_connection):
     try:
-        if testing_oracle_warehouse_connection(oracle_warehouse_connection):
-            return oracle_warehouse_connection
+        if testing_oracle_base_connection(oracle_base_connection):
+            return oracle_base_connection
         else:
-            return get_oracle_warehouse_connection()
+            return get_oracle_base_connection()
     except oracledb.DatabaseError as e:
         logger.error("Error de base de datos durante la conexión: %s", e)
         raise
@@ -52,12 +56,12 @@ def get_reconnect_oracle_warehouse(oracle_warehouse_connection):
         raise
 
 
-def testing_oracle_warehouse_connection(oracle_warehouse_connection) -> bool:
+def testing_oracle_base_connection(oracle_base_connection) -> bool:
     try:
-        if oracle_warehouse_connection is None:
+        if oracle_base_connection is None:
             return False
-        oracle_warehouse_connection.outputtypehandler = output_type_handler
-        cursor = oracle_warehouse_connection.cursor()
+        oracle_base_connection.outputtypehandler = output_type_handler
+        cursor = oracle_base_connection.cursor()
         cursor.execute("SELECT * FROM v$version")
         version = cursor.fetchone()[0]
         cursor.close()
@@ -74,13 +78,13 @@ def testing_oracle_warehouse_connection(oracle_warehouse_connection) -> bool:
         return False
 
 
-class OracleWarehouse:
+class OracleTransaction:
     def __init__(self):
-        self.connection = get_oracle_warehouse_connection()
-    
+        self.connection = get_oracle_base_connection()
+
     def __enter__(self):
-        self.connection = get_reconnect_oracle_warehouse(self.connection)
+        self.connection = get_reconnect_oracle_base(self.connection)
         return self.connection
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.connection.close()

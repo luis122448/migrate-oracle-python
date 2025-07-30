@@ -6,8 +6,8 @@ import glob
 from fastapi import Depends, HTTPException
 from datetime import datetime
 from schemas.api_response_schema import ApiResponseSchema
-from configs.oracle_transactional import OracleTransaction
-from configs.oracle_warehouse import OracleWarehouse
+from backend.app.configs.oracle_base import OracleTransaction
+from backend.app.configs.oracle_autonomous import OracleWarehouse
 from utils.path import PATHLOG, PATHUTILS, PATHDATABASE
 from utils.logger_config import setup_migrate_service_logger
 
@@ -23,12 +23,12 @@ class MigrateService:
     """
 
     def __init__(self,
-                 oracle_transactional: OracleTransaction = Depends(),
-                 oracle_warehouse: OracleWarehouse = Depends()) -> None:
-        self.oracle_transactional = oracle_transactional
-        self.oracle_warehouse = oracle_warehouse
-        self.src_conn = self.oracle_transactional.connection
-        self.dst_conn = self.oracle_warehouse.connection
+                 oracle_base: OracleTransaction = Depends(),
+                 oracle_autonomous: OracleWarehouse = Depends()) -> None:
+        self.oracle_base = oracle_base
+        self.oracle_autonomous = oracle_autonomous
+        self.src_conn = self.oracle_base.connection
+        self.dst_conn = self.oracle_autonomous.connection
         self.src_cursor = self.src_conn.cursor()
         self.dst_cursor = self.dst_conn.cursor()
 

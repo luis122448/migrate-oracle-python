@@ -16,10 +16,12 @@ frontend/dist
 # App Configuration
 backend/logs/*
 !backend/logs/dummy.log
-backend/app/wallet/*
+backend/app/keys/*
+!backend/app/keys/README.md
 
 # Oracle Instant Client Configuration
 backend/oracle_home/*
+!backend/oracle_home/*.sh
 
 # Environment Configuration
 .env
