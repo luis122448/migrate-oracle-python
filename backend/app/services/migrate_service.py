@@ -6,8 +6,8 @@ import glob
 from fastapi import Depends, HTTPException
 from datetime import datetime
 from schemas.api_response_schema import ApiResponseSchema
-from backend.app.configs.oracle_base import OracleTransaction
-from backend.app.configs.oracle_autonomous import OracleWarehouse
+from configs.oracle_base import OracleTransaction
+from configs.oracle_autonomous import OracleWarehouse
 from utils.path import PATHLOG, PATHUTILS, PATHDATABASE
 from utils.logger_config import setup_migrate_service_logger
 

@@ -8,11 +8,21 @@
       class="flex flex-col md:flex-row gap-4 items-center w-full"
     >
       <div class="flex-1 w-full">
-        <label
-          for="source-company-id"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Source Company ID (Numeric)</label
-        >
+        <div class="flex my-1 justify-between">
+          <label
+            for="source-company-id"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Source Company ID</label
+          >
+          <div id="oracle-base-status">
+            <div role="status" class="max-w-sm animate-pulse">
+              <div
+                class="h-6 bg-gray-200 rounded-sm dark:bg-gray-700 w-16"
+              >
+              </div>
+            </div>
+          </div>
+        </div>
         <input
           type="number"
           id="source-company-id"
@@ -22,11 +32,21 @@
         />
       </div>
       <div class="flex-1 w-full">
-        <label
-          for="dest-company-id"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Destination Company ID (Numeric)</label
-        >
+        <div class="flex my-1 justify-between">
+          <label
+            for="dest-company-id"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Destination Company ID</label
+          >
+          <div id="oracle-autonomous-status">
+            <div role="status" class="max-w-sm animate-pulse">
+              <div
+                class="h-6 bg-gray-200 rounded-sm dark:bg-gray-700 w-16"
+              >
+              </div>
+            </div>
+          </div>
+        </div>
         <input
           type="number"
           id="dest-company-id"
@@ -62,12 +82,10 @@
             >
               <path
                 d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                fill="#E5E7EB"
-              ></path>
+                fill="#E5E7EB"></path>
               <path
                 d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                fill="currentColor"
-              ></path>
+                fill="currentColor"></path>
             </svg>
             Loading...
           </span>
@@ -132,8 +150,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-            ></path>
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
           </svg>
           <span class="sr-only">Close modal</span>
         </button>
@@ -150,17 +167,14 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            ></path>
+              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
           </svg>
           <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
             Are you sure you want to start migration from company <span
               id="modal-source-id"
-              class="font-bold"
-            ></span> to company <span
+              class="font-bold"></span> to company <span
               id="modal-dest-id"
-              class="font-bold"
-            ></span>?
+              class="font-bold"></span>?
           </h3>
           <button
             id="confirm-migration-btn"
@@ -190,7 +204,8 @@
     <div
       id="migration-log"
       class="mt-2 text-sm font-bold text-gray-700 dark:text-gray-200 font-mono whitespace-pre-wrap"
-    ></div>
+    >
+    </div>
   </section>
   <section class="mt-4">
     <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
@@ -219,11 +234,15 @@
     const migrationStatus = document.getElementById("migration-status");
     const migrationLog = document.getElementById("migration-log");
     const preScriptsCheckbox = document.getElementById("pre-scripts-checkbox");
-    const postScriptsCheckbox = document.getElementById("post-scripts-checkbox");
+    const postScriptsCheckbox = document.getElementById(
+      "post-scripts-checkbox"
+    );
     const confirmationModal = document.getElementById("confirmation-modal");
     const modalSourceId = document.getElementById("modal-source-id");
     const modalDestId = document.getElementById("modal-dest-id");
-    const confirmMigrationBtn = document.getElementById("confirm-migration-btn");
+    const confirmMigrationBtn = document.getElementById(
+      "confirm-migration-btn"
+    );
     const cancelMigrationBtn = document.getElementById("cancel-migration-btn");
     const validationMessage = document.getElementById("validation-message");
     const printReportBtn = document.getElementById("print-report-btn");
@@ -232,6 +251,10 @@
     const migrationForm = document.getElementById("migration-form");
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
+    const oracleBaseStatus = document.getElementById("oracle-base-status");
+    const oracleAutonomousStatus = document.getElementById(
+      "oracle-autonomous-status"
+    );
 
     if (
       !startMigrationBtn ||
@@ -252,7 +275,9 @@
       !printReportText ||
       !printReportLoading ||
       !progressBar ||
-      !progressText
+      !progressText ||
+      !oracleBaseStatus ||
+      !oracleAutonomousStatus
     ) {
       console.error("Error: One or more migration elements not found.");
       return;
@@ -283,6 +308,49 @@
     destCompanyIdInput.addEventListener("input", validateForm);
 
     validateForm();
+
+    const checkOracleBase = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/check/oracle-base`);
+        if (response.ok) {
+          oracleBaseStatus.innerHTML = `
+            <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">OK</span>
+          `;
+        } else {
+          oracleBaseStatus.innerHTML = `
+            <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">NOT OK</span>
+          `;
+        }
+      } catch (error) {
+        console.error("Error checking Oracle Base status:", error);
+        oracleBaseStatus.innerHTML = `
+          <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">ERROR</span>
+        `;
+      }
+    };
+
+    const checkOracleAutonomous = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/check/oracle-autonomous`);
+        if (response.ok) {
+          oracleAutonomousStatus.innerHTML = `
+            <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">OK</span>
+          `;
+        } else {
+          oracleAutonomousStatus.innerHTML = `
+            <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">NOT OK</span>
+          `;
+        }
+      } catch (error) {
+        console.error("Error checking Oracle Autonomous status:", error);
+        oracleAutonomousStatus.innerHTML = `
+          <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">ERROR</span>
+        `;
+      }
+    };
+
+    checkOracleBase();
+    checkOracleAutonomous();
 
     startMigrationBtn.addEventListener("click", () => {
       if (modalSourceId && modalDestId) {
@@ -386,7 +454,25 @@
         );
       };
 
-      ws.onmessage = (event) => {        const message = event.data;        if (message.startsWith("PROGRESS:")) {          const parts = message.substring(9).split("/");          const current = parseInt(parts[0], 10);          const total = parseInt(parts[1], 10);          const percentage = Math.round((current / total) * 100);          if (progressBar) {            progressBar.style.width = `${percentage}%`;          }          if (progressText) {            progressText.textContent = `${percentage}%`;          }        } else {          console.log("Received message:", message);          migrationLog.textContent += message + "\n";          migrationLog.scrollTop = migrationLog.scrollHeight;        }      };
+      ws.onmessage = (event) => {
+        const message = event.data;
+        if (message.startsWith("PROGRESS:")) {
+          const parts = message.substring(9).split("/");
+          const current = parseInt(parts[0], 10);
+          const total = parseInt(parts[1], 10);
+          const percentage = Math.round((current / total) * 100);
+          if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+          }
+          if (progressText) {
+            progressText.textContent = `${percentage}%`;
+          }
+        } else {
+          console.log("Received message:", message);
+          migrationLog.textContent += message + "\n";
+          migrationLog.scrollTop = migrationLog.scrollHeight;
+        }
+      };
 
       ws.onclose = (event) => {
         migrationStatus.textContent = `Disconnected. Code: ${event.code}, Reason: ${event.reason}`;
@@ -403,4 +489,3 @@
 
   initializeMigrateManager();
 </script>
-

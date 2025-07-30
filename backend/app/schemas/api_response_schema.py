@@ -11,8 +11,6 @@ class ApiResponseSchema(BaseModel):
 
     status: float
     message: str
-    id_cia: Optional[int] = None
-    timestamp: Optional[str] = None
 
     model_config = {
         "json_schema_extra": {
