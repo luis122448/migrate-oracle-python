@@ -8,4 +8,4 @@ export LD_LIBRARY_PATH=/var/www/migrate-oracle-python/backend/oracle_home/instan
 export PATH=/var/www/migrate-oracle-python/backend/oracle_home/instantclient:$PATH
 
 # Start server
-python app/server.py
+python3 app/server.py

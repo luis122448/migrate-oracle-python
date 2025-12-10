@@ -11,6 +11,7 @@ class ApiResponseSchema(BaseModel):
 
     status: float
     message: str
+    timestamp: Optional[str] = None
 
     model_config = {
         "json_schema_extra": {

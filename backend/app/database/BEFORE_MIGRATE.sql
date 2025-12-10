@@ -58,6 +58,47 @@ WHERE
             AND cc1.codcli = cc.codcli
     )
 /
+DELETE FROM clientecontacto_clase cc
+WHERE
+        cc.id_cia = PIN_ID_CIA
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            contacto c
+        WHERE
+                c.id_cia = cc.id_cia
+            AND c.codcont = cc.codcont
+    )
+/
+UPDATE asiendet
+SET 
+    moneda = 'PEN'
+WHERE
+    id_cia = PIN_ID_CIA
+    AND moneda IS NULL
+/
+UPDATE movimientos
+SET 
+    moneda = 'PEN'
+WHERE
+    id_cia = PIN_ID_CIA
+    AND moneda IS NULL
+/
+UPDATE compr010
+SET
+    concep = 'SIN CONCEPTO'
+WHERE
+    id_cia = PIN_ID_CIA
+    AND concep IS NULL
+/
+UPDATE prov105
+SET
+    series = '999'
+WHERE
+    id_cia = PIN_ID_CIA
+    AND series IS NULL
+/
 INSERT INTO cliente (
    id_cia,
    codcli,

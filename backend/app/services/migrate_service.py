@@ -239,9 +239,8 @@ class MigrateService:
         Realiza la migración de todas las tablas listadas en el archivo 'tables.txt'.
         Se espera que el archivo contenga un nombre de tabla por línea.
         Se deshabilitan y habilitan los triggers de forma masiva para optimizar el proceso.
-        Se propagan los errores al archivo de log.
         """
-        response = ApiResponseSchema(status=1, message="OK", id_cia=dest_id_cia, timestamp="")
+        response = ApiResponseSchema(status=1, message="OK", timestamp="")
         start_time = time.time()
         timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
         log_filename = f"LOG-{timestamp.replace('/', '-').replace(':', '-')}.txt"
@@ -344,7 +343,7 @@ class MigrateService:
         return response
 
     def validate_migration(self, source_id_cia: int, dest_id_cia: int, exceptions: list[str] = []) -> ApiResponseSchema:
-        response = ApiResponseSchema(status=1, message="OK", id_cia=dest_id_cia, timestamp="")
+        response = ApiResponseSchema(status=1, message="OK", timestamp="")
         start_time = time.time()
         locale.setlocale(locale.LC_TIME, 'en_US.UTF-8')
         timestamp_str = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
@@ -365,7 +364,7 @@ class MigrateService:
         separator = "-" * (table_col_width + 42) + "\n"
 
         report_lines = []
-        report_lines.append(f"MIGRATION VALIDATION REPORT - {timestamp}\n")
+        report_lines.append(f"MIGRATION VALIDATION REPORT - {timestamp_str}\n")
         report_lines.append("=" * (table_col_width + 42) + "\n")
         report_lines.append(header)
         report_lines.append(separator)
